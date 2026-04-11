@@ -2,11 +2,13 @@ package com.br.chagas.midnights_fm.service;
 
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
-import com.br.chagas.midnights_fm.dto.request.UserRequestDTO;
+import com.br.chagas.midnights_fm.dto.request.AuthLoginDTO;
+import com.br.chagas.midnights_fm.dto.request.AuthRegisterDTO;
 import com.br.chagas.midnights_fm.dto.response.AuthResponseDTO;
+import com.br.chagas.midnights_fm.infra.security.TokenService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +23,8 @@ public class AuthService implements UserDetailsService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenService tokenService) {
+
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, @Lazy AuthenticationManager authenticationManager, TokenService tokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
@@ -34,10 +37,10 @@ public class AuthService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public AuthResponseDTO registerUser(UserRequestDTO userRequestDTO) {
+    public AuthResponseDTO loginUser(AuthLoginDTO authLoginDTO) {
         // variable fetch register credentials
-        var authToken = new UsernamePasswordAuthenticationToken(userRequestDTO.getUsername(),
-                userRequestDTO.getPassword());
+        var authToken = new UsernamePasswordAuthenticationToken(authLoginDTO.getUsername(),
+                authLoginDTO.getPassword());
 
         // spring validation
         var authentication = authenticationManager.authenticate(authToken);
@@ -47,6 +50,22 @@ public class AuthService implements UserDetailsService {
 
         var token = tokenService.generateToken(user);
         return new AuthResponseDTO(token);
+    }
+
+    public void registerUser(AuthRegisterDTO request) {
+        UserEntity user = new UserEntity();
+        if (!userRepository.existsByUsername(request.getUsername())) {
+            user.setUsername(request.getUsername());
+        }
+
+        if (!userRepository.existsByEmail(request.getUsername())) {
+            user.setEmail(request.getEmail());
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
+
+        userRepository.save(user);
     }
 
 

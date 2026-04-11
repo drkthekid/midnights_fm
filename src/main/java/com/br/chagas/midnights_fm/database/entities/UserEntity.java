@@ -36,8 +36,8 @@ public class UserEntity implements UserDetails {
 
     private UserRole role;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+//    @Column(name = "created_at")
+//    private LocalDateTime createdAt;
 
 
     @Override
@@ -69,6 +69,4 @@ public class UserEntity implements UserDetails {
     public String getUsername() {
         return username;
     }
-
-
 }
