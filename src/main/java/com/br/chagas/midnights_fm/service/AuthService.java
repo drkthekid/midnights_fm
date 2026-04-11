@@ -1,10 +1,13 @@
 package com.br.chagas.midnights_fm.service;
 
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
+import com.br.chagas.midnights_fm.database.entities.enums.UserRole;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.AuthLoginDTO;
 import com.br.chagas.midnights_fm.dto.request.AuthRegisterDTO;
 import com.br.chagas.midnights_fm.dto.response.AuthResponseDTO;
+import com.br.chagas.midnights_fm.exception.BadRequestException;
+import com.br.chagas.midnights_fm.exception.NotFoundException;
 import com.br.chagas.midnights_fm.infra.security.TokenService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,7 +37,7 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     public AuthResponseDTO loginUser(AuthLoginDTO authLoginDTO) {
@@ -52,7 +55,7 @@ public class AuthService implements UserDetailsService {
         return new AuthResponseDTO(token);
     }
 
-    public void registerUser(AuthRegisterDTO request) {
+    public String registerUser(AuthRegisterDTO request) throws BadRequestException {
         UserEntity user = new UserEntity();
         if (!userRepository.existsByUsername(request.getUsername())) {
             user.setUsername(request.getUsername());
@@ -63,9 +66,12 @@ public class AuthService implements UserDetailsService {
         }
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
         user.setRole(request.getRole());
 
         userRepository.save(user);
+
+        return "User registered with success!";
     }
 
 
