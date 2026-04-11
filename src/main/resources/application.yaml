@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: midnights-fm
+  datasource:
+    url: jdbc:mysql://localhost:3306/midnights_fm?createDatabaseIfNotExist=true
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+
