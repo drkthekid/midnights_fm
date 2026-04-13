@@ -86,4 +86,16 @@ public class UserService {
 
         return "Password changed successfully";
     }
+
+    public String deleteAccount() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserEntity user)) {
+            throw new UnauthorizedException("user not authenticated or invalid session");
+        }
+
+        userRepository.delete(user);
+
+        return "User deleted successfully";
+    }
 }

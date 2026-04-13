@@ -32,4 +32,10 @@ public class UserController {
     public String updatePassword(@RequestBody UserChangePasswordRequestDTO userChangePasswordRequestDTO) {
         return userService.changePassword(userChangePasswordRequestDTO);
     }
+
+    @DeleteMapping("/me")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public String deleteAccount(){
+        return userService.deleteAccount();
+    }
 }
