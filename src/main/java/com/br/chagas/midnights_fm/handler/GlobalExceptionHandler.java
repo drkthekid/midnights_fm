@@ -1,10 +1,6 @@
 package com.br.chagas.midnights_fm.handler;
 
-import com.br.chagas.midnights_fm.exception.BadRequestException;
-import com.br.chagas.midnights_fm.exception.ErrorResponse;
-import com.br.chagas.midnights_fm.exception.NotFoundException;
-import com.br.chagas.midnights_fm.exception.UnauthorizedException;
-import org.apache.coyote.Response;
+import com.br.chagas.midnights_fm.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +17,16 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflictException(NotFoundException e) {
+        ErrorResponse response = ErrorResponse.builder()
+                .message(e.getMessage())
+                .status(HttpStatus.CONFLICT.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler(BadRequestException.class)

@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Table(name = "album")
+@Table(name = "albums")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,11 +21,16 @@ public class AlbumEntity {
 
     private String name;
 
-    private String genrer;
+    private String genre;
 
-    private List<TrackEntity> track_id;
+    @OneToMany(mappedBy = "album")
+    private List<TrackEntity> tracks;
 
+    @OneToMany(mappedBy = "album")
+    private List<SingleEntity> singles;
 
-
+    @ManyToOne
+    @JoinColumn(name = "artist_id")
+    private UserEntity artist;
 
 }

@@ -33,6 +33,9 @@ public class SecurityFilterConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
+                        // user endpoint
+                        .requestMatchers(HttpMethod.GET, "/api/user/**").authenticated()
+
 
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
