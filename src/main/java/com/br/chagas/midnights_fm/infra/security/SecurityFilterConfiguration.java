@@ -36,6 +36,8 @@ public class SecurityFilterConfiguration {
                         // user endpoint
                         .requestMatchers(HttpMethod.GET, "/api/user/**").authenticated()
 
+                        // artist endpoint
+                        .requestMatchers("/api/artist/**").hasRole("ARTIST")
 
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

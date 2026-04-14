@@ -26,9 +26,6 @@ public class AlbumEntity {
     @OneToMany(mappedBy = "album")
     private List<TrackEntity> tracks;
 
-    @OneToMany(mappedBy = "album")
-    private List<SingleEntity> singles;
-
     @ManyToOne
     @JoinColumn(name = "artist_id")
     private UserEntity artist;
