@@ -38,8 +38,8 @@ This document describes the database structure based on the diagram used in this
 | Column       | Type/Constraint  | Description                    |
 |:-------------|:-----------------|:-------------------------------|
 | `id`         | PK (Primary Key) | Review's identifier            |
-| `review`     | Attribute        | Review's review                |
-| `avaliation` | Attribute        | Review's avalation (1,5) stars |
+| `commentary` | Attribute        | Review's review                |
+| `assessment` | Attribute        | Review's assessment (1,5) stars |
 | `album_id`   | FK (FOREIGN KEY) | Review's album                 |
 | `user_id`    | FK (FOREIGN KEY) | Review's user                  |
 
