@@ -232,6 +232,29 @@ public class ArtistService {
         );
     }
 
+    public AlbumResponseDTO findAlbumById(Integer id) {
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
+            throw new UnauthorizedException("User not authenticated or invalid session");
+        }
+
+        AlbumEntity album = albumRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Album not found"));
+
+        return AlbumResponseDTO.builder()
+                .id(album.getId())
+                .name(album.getName())
+                .genre(album.getGenre())
+                .tracksId(album.getTracks()
+                        .stream()
+                        .map(t -> t.getId())
+                        .toList())
+                .artist(album.getArtist().getId())
+                .build();
+    }
+
     public AlbumResponseDTO createAlbum(AlbumRequestDTO albumRequestDTO) {
 
         List<TrackEntity> tracksIds = new ArrayList<>();
@@ -271,6 +294,20 @@ public class ArtistService {
                         .toList())
                 .artist(album.getArtist().getId())
                 .build();
+    }
+
+    public void deleteAlbum(Integer id) {
+
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
+            throw new UnauthorizedException("User not authenticated or invalid session");
+        }
+
+        AlbumEntity album = albumRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Album not found"));
+
+        albumRepository.delete(album);
     }
 
 

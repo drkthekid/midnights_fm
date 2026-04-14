@@ -55,9 +55,23 @@ public class ArtistController {
         return artistService.findAllAlbums(page, size);
     }
 
+    @GetMapping("/album/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public AlbumResponseDTO findAlbumById(@PathVariable Integer id) {
+        return artistService.findAlbumById(id);
+    }
+
     @PostMapping("/album")
     @ResponseStatus(HttpStatus.CREATED)
     public AlbumResponseDTO createAlbum(@RequestBody AlbumRequestDTO albumRequestDTO) {
         return artistService.createAlbum(albumRequestDTO);
     }
+
+    @DeleteMapping("/album/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAlbum(@PathVariable Integer id) {
+        artistService.deleteAlbum(id);
+    }
+
+
 }
