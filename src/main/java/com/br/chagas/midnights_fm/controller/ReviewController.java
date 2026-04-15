@@ -21,12 +21,15 @@ public class ReviewController {
         return reviewService.findAllReviews(page, size);
     }
 
+    @GetMapping("/{id}")
+    public ReviewResponseDTO findReviewById(@PathVariable Integer id) {
+        return reviewService.findMyReviewByid(id);
+    }
+
     @PostMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public ReviewResponseDTO createReview(@PathVariable Integer id,
                                           @RequestBody ReviewRequestDTO reviewRequestDTO) {
         return reviewService.createReview(id, reviewRequestDTO);
     }
-
-
 }

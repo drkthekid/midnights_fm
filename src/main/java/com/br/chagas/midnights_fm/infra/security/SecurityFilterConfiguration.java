@@ -37,7 +37,8 @@ public class SecurityFilterConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/user/**").authenticated()
 
                         // artist endpoint
-                        .requestMatchers("/api/artist/**").hasRole("ARTIST")
+                        .requestMatchers("/api/track/**").hasRole("ARTIST")
+                        .requestMatchers("/api/album/**").hasRole("ARTIST")
 
                         // review endpoint
                         .requestMatchers("/api/review/**").authenticated()

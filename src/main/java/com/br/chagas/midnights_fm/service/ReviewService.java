@@ -37,6 +37,19 @@ public class ReviewService {
         );
     }
 
+    public ReviewResponseDTO findMyReviewByid(Integer id) {
+        ReviewEntity review = reviewRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Review not found"));
+
+        return ReviewResponseDTO.builder()
+                .id(review.getId())
+                .commentary(review.getCommentary())
+                .assessment(review.getAssessment())
+                .userId(review.getUser().getId())
+                .albumId(review.getAlbum().getId())
+                .build();
+    }
+
     public ReviewResponseDTO createReview(Integer id, ReviewRequestDTO reviewRequestDTO) {
 
         // authenticate validation
@@ -70,5 +83,6 @@ public class ReviewService {
                 .userId(review.getUser().getId())
                 .build();
     }
+
 
 }
