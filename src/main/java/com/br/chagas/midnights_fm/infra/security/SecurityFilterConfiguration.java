@@ -1,5 +1,7 @@
 package com.br.chagas.midnights_fm.infra.security;
 
+import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
+import com.br.chagas.midnights_fm.handler.CustomSecurityAccessDeniedHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityFilterConfiguration {
 
     private final SecurityFilter securityFilter;
+    private final CustomSecurityAccessDeniedHandler customSecurityAccessDeniedHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
@@ -34,16 +37,21 @@ public class SecurityFilterConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
                         // user endpoint
-                        .requestMatchers(HttpMethod.GET, "/api/user/**").authenticated()
+                        .requestMatchers("/api/user/**").authenticated()
 
-                        // artist endpoint
-                        .requestMatchers("/api/track/**").hasRole("ARTIST")
-                        .requestMatchers("/api/album/**").hasRole("ARTIST")
+                        // track endpoint
+                        .requestMatchers(HttpMethod.POST, "/api/track/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.GET, "/api/track/**").authenticated()
+
+                        // album endpoint
+                        .requestMatchers(HttpMethod.POST, "/api/album/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.GET, "/api/album/**").authenticated()
 
                         // review endpoint
                         .requestMatchers("/api/review/**").authenticated()
 
                         .anyRequest().authenticated())
+                .exceptionHandling(handling -> handling.accessDeniedHandler(customSecurityAccessDeniedHandler))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

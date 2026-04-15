@@ -3,11 +3,13 @@ package com.br.chagas.midnights_fm.service;
 import com.br.chagas.midnights_fm.database.entities.AlbumEntity;
 import com.br.chagas.midnights_fm.database.entities.TrackEntity;
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
+import com.br.chagas.midnights_fm.database.entities.enums.UserRole;
 import com.br.chagas.midnights_fm.database.repository.AlbumRepository;
 import com.br.chagas.midnights_fm.database.repository.TrackRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.TrackRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.TrackResponseDTO;
+import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import com.br.chagas.midnights_fm.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +30,7 @@ public class TrackService {
     private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
 
-    // TRACK CRUD
     public Page<TrackResponseDTO> findAllTracks(Integer page, Integer size) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
-
         Page<TrackEntity> tracks = trackRepository.findAll(PageRequest.of(page, size));
 
         return tracks.map(t -> TrackResponseDTO.builder()
@@ -50,12 +45,6 @@ public class TrackService {
     }
 
     public TrackResponseDTO findTrackById(Integer id) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
-
         TrackEntity track = trackRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Track not found"));
 
@@ -70,21 +59,17 @@ public class TrackService {
                 .build();
     }
 
-
     public TrackResponseDTO createTrack(TrackRequestDTO trackRequestDTO) {
         // list de feats
         List<UserEntity> featsId = new ArrayList<>();
 
-        // validation if user is authenticated
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or session invalid");
-        }
-
         // validation if artist exists and return exception
         UserEntity artist = userRepository.findById(trackRequestDTO.getArtistId())
                 .orElseThrow(() -> new NotFoundException("Artist not found"));
+
+//        if (artist.getRole() == UserRole.USER) {
+//            throw new BadRequestException("User not authorized");
+//        }
 
         // find feats
         for (String featId : trackRequestDTO.getFeatsId()) {

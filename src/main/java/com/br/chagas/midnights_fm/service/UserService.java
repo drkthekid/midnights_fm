@@ -7,6 +7,7 @@ import com.br.chagas.midnights_fm.dto.request.UserRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.UserResponseDTO;
 import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.ConflictException;
+import com.br.chagas.midnights_fm.exception.NotFoundException;
 import com.br.chagas.midnights_fm.exception.UnauthorizedException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,26 +21,22 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserResponseDTO findMe() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+    public UserResponseDTO findMe(String username) {
+        // request needs username
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
-
+        // return user dto out password
         return UserResponseDTO.builder()
-                .username(user.getEmail())
+                .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
                 .build();
     }
 
-    public UserResponseDTO updateMe(UserRequestDTO dto) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
+    public UserResponseDTO updateMe(String username, UserRequestDTO dto) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         // EMAIL
         if (dto.getEmail() != null && !dto.getEmail().equals(user.getEmail())) {
@@ -70,12 +67,9 @@ public class UserService {
                 .build();
     }
 
-    public String changePassword(UserChangePasswordRequestDTO userChangePasswordRequestDTO) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
+    public String changePassword(UserChangePasswordRequestDTO userChangePasswordRequestDTO, String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (userChangePasswordRequestDTO.getPassword().isBlank()) {
             throw new BadRequestException("New password cannot be empty");
@@ -87,16 +81,11 @@ public class UserService {
         return "Password changed successfully";
     }
 
-    public String deleteAccount() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserEntity user)) {
-            throw new UnauthorizedException("user not authenticated or invalid session");
-        }
+    public void deleteAccount(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         userRepository.delete(user);
-
-        return "User deleted successfully";
     }
 
 
