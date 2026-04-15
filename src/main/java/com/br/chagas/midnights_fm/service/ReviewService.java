@@ -8,6 +8,7 @@ import com.br.chagas.midnights_fm.database.repository.ReviewRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.ReviewRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.ReviewResponseDTO;
+import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import com.br.chagas.midnights_fm.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class ReviewService {
         );
     }
 
-    public ReviewResponseDTO findMyReviewByid(Integer id) {
+    public ReviewResponseDTO findReviewById(Integer id) {
         ReviewEntity review = reviewRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Review not found"));
 
@@ -50,16 +51,9 @@ public class ReviewService {
                 .build();
     }
 
-    public ReviewResponseDTO createReview(Integer id, ReviewRequestDTO reviewRequestDTO) {
-
-        // authenticate validation
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // inside get user request and apply as creator review
-        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
-
+    public ReviewResponseDTO createReview(Integer id, ReviewRequestDTO reviewRequestDTO, String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
         // finding album or return error
         AlbumEntity album = albumRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Album not found"));
@@ -68,7 +62,7 @@ public class ReviewService {
                 .commentary(reviewRequestDTO.getCommentary())
                 .assessment(reviewRequestDTO.getAssessment())
                 .album(album)
-                .user(user) // authenticated
+                .user(user)
                 .build();
 
         // store to the database
@@ -82,6 +76,17 @@ public class ReviewService {
                 .albumId(review.getAlbum().getId())
                 .userId(review.getUser().getId())
                 .build();
+    }
+
+    public void deleteReview(Integer id, String username) {
+        ReviewEntity review = reviewRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Review not found"));
+
+        if (!review.getUser().getId().equals(username)) {
+            throw new CustomAcessDeniedException("You not are owner this review");
+        }
+
+        reviewRepository.delete(review);
     }
 
 

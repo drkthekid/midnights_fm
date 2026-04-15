@@ -8,6 +8,7 @@ import com.br.chagas.midnights_fm.database.repository.TrackRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.AlbumRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.AlbumResponseDTO;
+import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import com.br.chagas.midnights_fm.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
@@ -43,13 +44,6 @@ public class AlbumService {
     }
 
     public AlbumResponseDTO findAlbumById(Integer id) {
-
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
-
         AlbumEntity album = albumRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Album not found"));
 
@@ -65,24 +59,22 @@ public class AlbumService {
                 .build();
     }
 
-    public AlbumResponseDTO createAlbum(AlbumRequestDTO albumRequestDTO) {
+    public AlbumResponseDTO createAlbum(AlbumRequestDTO albumRequestDTO, String username) {
 
         List<TrackEntity> tracksIds = new ArrayList<>();
-
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity artist)) {
-            throw new UnauthorizedException("Artist not authenticated or invalid session");
-        }
 
         for (Integer trackId : albumRequestDTO.getTracksId()) {
             TrackEntity track = trackRepository.findById(trackId)
                     .orElseThrow(() -> new NotFoundException("Track not found"));
 
+            if (!track.getArtist().getId().equals(username)) {
+                throw new CustomAcessDeniedException("You not are owner this track!");
+            }
+
             tracksIds.add(track);
         }
 
-        artist = userRepository.findById(albumRequestDTO.getArtistId())
+        UserEntity artist = userRepository.findById(albumRequestDTO.getArtistId())
                 .orElseThrow(() -> new NotFoundException("Artist not found"));
 
         AlbumEntity album = AlbumEntity.builder()
@@ -106,16 +98,13 @@ public class AlbumService {
                 .build();
     }
 
-    public void deleteAlbum(Integer id) {
-
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
-
+    public void deleteAlbum(Integer id, String username) {
         AlbumEntity album = albumRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Album not found"));
+
+        if (!album.getArtist().getId().equals(username)) {
+            throw new CustomAcessDeniedException("You not are owner this track!");
+        }
 
         albumRepository.delete(album);
     }

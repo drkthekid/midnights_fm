@@ -3,19 +3,16 @@ package com.br.chagas.midnights_fm.service;
 import com.br.chagas.midnights_fm.database.entities.AlbumEntity;
 import com.br.chagas.midnights_fm.database.entities.TrackEntity;
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
-import com.br.chagas.midnights_fm.database.entities.enums.UserRole;
 import com.br.chagas.midnights_fm.database.repository.AlbumRepository;
 import com.br.chagas.midnights_fm.database.repository.TrackRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.TrackRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.TrackResponseDTO;
-import com.br.chagas.midnights_fm.exception.BadRequestException;
+import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
-import com.br.chagas.midnights_fm.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -67,10 +64,6 @@ public class TrackService {
         UserEntity artist = userRepository.findById(trackRequestDTO.getArtistId())
                 .orElseThrow(() -> new NotFoundException("Artist not found"));
 
-//        if (artist.getRole() == UserRole.USER) {
-//            throw new BadRequestException("User not authorized");
-//        }
-
         // find feats
         for (String featId : trackRequestDTO.getFeatsId()) {
             UserEntity feat = userRepository.findById(featId)
@@ -111,18 +104,15 @@ public class TrackService {
                 .build();
     }
 
-    public TrackResponseDTO update(Integer id, TrackRequestDTO trackRequestDTO) {
-
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
-            throw new UnauthorizedException("Artist not authenticated or invalid session");
-        }
-
+    public TrackResponseDTO update(Integer id, TrackRequestDTO trackRequestDTO, String username) {
         List<UserEntity> featsId = new ArrayList<>();
 
         TrackEntity track = trackRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Track not found"));
+
+        if (!track.getArtist().getId().equals(username)) {
+            throw new CustomAcessDeniedException("You are not the owner of this track!");
+        }
 
         UserEntity newArtist = userRepository.findById(trackRequestDTO.getArtistId())
                 .orElseThrow(() -> new NotFoundException("Artist not found"));
@@ -179,24 +169,17 @@ public class TrackService {
                 .build();
     }
 
-    public String deleteTrack(Integer id) {
-
-        // fazer com que so pode deletar a que ele mesmo criou
-
-        // validation if logged
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !((authentication.getPrincipal()) instanceof UserEntity user)) {
-            throw new UnauthorizedException("User not authenticated or invalid session");
-        }
-
+    public void deleteTrack(Integer id, String username) {
         // finding track on database
         TrackEntity track = trackRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Track not found"));
 
+        if (!track.getArtist().getId().equals(username)) {
+            throw new CustomAcessDeniedException("You are not the owner of this track!");
+        }
+
         // delete track
         trackRepository.delete(track);
-
-        return "Track deleted by successfully";
     }
 
 }

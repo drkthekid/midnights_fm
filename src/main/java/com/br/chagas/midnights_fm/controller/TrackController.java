@@ -6,6 +6,8 @@ import com.br.chagas.midnights_fm.service.TrackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -35,15 +37,17 @@ public class TrackController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public TrackResponseDTO updateTrack(@PathVariable Integer id,
+    public TrackResponseDTO updateTrack(@AuthenticationPrincipal UserDetails principal,
+                                        @PathVariable Integer id,
                                         @RequestBody TrackRequestDTO trackRequestDTO) {
-        return trackService.update(id, trackRequestDTO);
+        return trackService.update(id, trackRequestDTO, principal.getUsername());
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public String deleteTrack(@PathVariable Integer id) {
-        return trackService.deleteTrack(id);
+    public void deleteTrack(@AuthenticationPrincipal UserDetails principal,
+                            @PathVariable Integer id) {
+        trackService.deleteTrack(id, principal.getUsername());
     }
 
 }

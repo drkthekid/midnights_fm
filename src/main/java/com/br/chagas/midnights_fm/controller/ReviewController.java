@@ -6,6 +6,8 @@ import com.br.chagas.midnights_fm.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,13 +25,21 @@ public class ReviewController {
 
     @GetMapping("/{id}")
     public ReviewResponseDTO findReviewById(@PathVariable Integer id) {
-        return reviewService.findMyReviewByid(id);
+        return reviewService.findReviewById(id);
     }
 
     @PostMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    public ReviewResponseDTO createReview(@PathVariable Integer id,
+    public ReviewResponseDTO createReview(@AuthenticationPrincipal UserDetails principal,
+                                          @PathVariable Integer id,
                                           @RequestBody ReviewRequestDTO reviewRequestDTO) {
-        return reviewService.createReview(id, reviewRequestDTO);
+        return reviewService.createReview(id, reviewRequestDTO, principal.getUsername());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteReview(@AuthenticationPrincipal UserDetails principal,
+                             @PathVariable Integer id) {
+        reviewService.deleteReview(id, principal.getUsername());
     }
 }

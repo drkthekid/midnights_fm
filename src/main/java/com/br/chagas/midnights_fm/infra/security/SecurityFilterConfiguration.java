@@ -41,10 +41,14 @@ public class SecurityFilterConfiguration {
 
                         // track endpoint
                         .requestMatchers(HttpMethod.POST, "/api/track/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.PUT, "/api/track/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.DELETE, "/api/track/**").hasRole("ARTIST")
                         .requestMatchers(HttpMethod.GET, "/api/track/**").authenticated()
 
                         // album endpoint
                         .requestMatchers(HttpMethod.POST, "/api/album/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.PUT, "/api/album/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.DELETE, "/api/album/**").hasRole("ARTIST")
                         .requestMatchers(HttpMethod.GET, "/api/album/**").authenticated()
 
                         // review endpoint
