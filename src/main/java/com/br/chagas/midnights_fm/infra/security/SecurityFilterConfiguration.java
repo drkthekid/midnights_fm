@@ -60,6 +60,9 @@ public class SecurityFilterConfiguration {
                         // review endpoint
                         .requestMatchers("/api/review/**").authenticated()
 
+                        // playlist endpoint
+                        .requestMatchers("/api/playlist/**").authenticated()
+
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling.accessDeniedHandler(customSecurityAccessDeniedHandler))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
