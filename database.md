@@ -35,13 +35,33 @@ This document describes the database structure based on the diagram used in this
 
 ### 4. Table `reviews`
 
-| Column       | Type/Constraint  | Description                    |
-|:-------------|:-----------------|:-------------------------------|
-| `id`         | PK (Primary Key) | Review's identifier            |
-| `commentary` | Attribute        | Review's review                |
+| Column       | Type/Constraint  | Description                     |
+|:-------------|:-----------------|:--------------------------------|
+| `id`         | PK (Primary Key) | Review's identifier             |
+| `commentary` | Attribute        | Review's review                 |
 | `assessment` | Attribute        | Review's assessment (1,5) stars |
-| `album_id`   | FK (FOREIGN KEY) | Review's album                 |
-| `user_id`    | FK (FOREIGN KEY) | Review's user                  |
+| `album_id`   | FK (FOREIGN KEY) | Review's album                  |
+| `user_id`    | FK (FOREIGN KEY) | Review's user                   |
+
+### 5. Table `obsessions`
+
+| Column        | Type/Constraint  | Description             |
+|:--------------|:-----------------|:------------------------|
+| `id`          | PK (Primary Key) | Obsession's identifier  |
+| `description` | Attribute        | Obsession's description |
+| `user_id`     | FK (FOREIGN KEY)       | Obsession's owner       |
+| `album_id`    | FK (FOREIGN KEY) | Obsession's album       |
+| `track_id`    | FK (FOREIGN KEY) | Obsession's track       |
+
+### 6. Table `playlist_invites`
+
+| Column        | Type/Constraint  | Description                                 |
+|:--------------|:-----------------|:--------------------------------------------|
+| `id`          | PK (Primary Key) | Invite's identifier                         |
+| `playlist_id` | FK (FOREIGN KEY)      | Invite's playlist                           |
+| `user_id`     | FK (FOREIGN KEY)         | Invite's owner (sender)                     |
+| `resolver_id` | FK (FOREIGN KEY)        | Invite's resolver                           |
+| `status`      | Attribute        | Invite's status (PENDING, ACCEPT, REJECTED) |
 
 ---
 
