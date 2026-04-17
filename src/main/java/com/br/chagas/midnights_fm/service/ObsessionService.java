@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @RequiredArgsConstructor
 public class ObsessionService {
@@ -32,6 +33,21 @@ public class ObsessionService {
         return obsessions.map(o -> ObsessionResponseDTO.builder()
                 .id(o.getId())
                 .userId(o.getUser().getId())
+                .albumId(o.getAlbum() != null ? o.getAlbum().getId() : null)
+                .trackId(o.getTrack() != null ? o.getTrack().getId() : null)
+                .description(o.getDescription())
+                .build());
+    }
+
+    public Page<ObsessionResponseDTO> findAllMyObsession(Integer page, Integer size, String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        Page<ObsessionEntity> obsessions = obsessionRepository.findObsessionByUserUsername(username, PageRequest.of(page, size));
+
+        return obsessions.map(o -> ObsessionResponseDTO.builder()
+                .id(o.getId())
+                .userId(user.getId())
                 .albumId(o.getAlbum() != null ? o.getAlbum().getId() : null)
                 .trackId(o.getTrack() != null ? o.getTrack().getId() : null)
                 .description(o.getDescription())
@@ -77,6 +93,17 @@ public class ObsessionService {
                 .userId(obsession.getUser().getId())
                 .description(obsession.getDescription())
                 .build();
+    }
+
+    public void deleteObsession(Integer id, String username) {
+        ObsessionEntity obsession = obsessionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Obsession not found"));
+
+        if (!obsession.getUser().getUsername().equals(username)) {
+            throw new BadRequestException("You are not owner this obsession");
+        }
+
+        obsessionRepository.delete(obsession);
     }
 
 }

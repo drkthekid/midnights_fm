@@ -19,15 +19,29 @@ public class ObsessionController {
 
     @GetMapping("/page/{page}/size/{size}")
     @ResponseStatus(HttpStatus.OK)
-    public Page<ObsessionResponseDTO> findAllObsessions(@PathVariable Integer page, @PathVariable Integer size){
+    public Page<ObsessionResponseDTO> findAllObsessions(@PathVariable Integer page, @PathVariable Integer size) {
         return obsessionService.findAllObsession(page, size);
+    }
+
+    @GetMapping("/me/page/{page}/size/{size}")
+    @ResponseStatus(HttpStatus.OK)
+    public Page<ObsessionResponseDTO> findAllMyObsessions(@AuthenticationPrincipal UserDetails principal,
+                                                          @PathVariable Integer page, @PathVariable Integer size) {
+        return obsessionService.findAllMyObsession(page, size, principal.getUsername());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ObsessionResponseDTO createObsession(@AuthenticationPrincipal UserDetails principal,
-                                                @RequestBody ObsessionRequestDTO obsessionRequestDTO){
+                                                @RequestBody ObsessionRequestDTO obsessionRequestDTO) {
         return obsessionService.createObsession(obsessionRequestDTO, principal.getUsername());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteObsession(@AuthenticationPrincipal UserDetails principal,
+                                @PathVariable Integer id){
+        obsessionService.deleteObsession(id, principal.getUsername());
     }
 
 }
