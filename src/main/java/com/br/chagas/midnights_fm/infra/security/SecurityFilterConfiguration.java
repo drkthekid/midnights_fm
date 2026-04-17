@@ -32,6 +32,9 @@ public class SecurityFilterConfiguration {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
 
+                        // swagger
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
                         // public endpoint
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
@@ -50,6 +53,9 @@ public class SecurityFilterConfiguration {
                         .requestMatchers(HttpMethod.PUT, "/api/album/**").hasRole("ARTIST")
                         .requestMatchers(HttpMethod.DELETE, "/api/album/**").hasRole("ARTIST")
                         .requestMatchers(HttpMethod.GET, "/api/album/**").authenticated()
+
+                        // obsession endpoint
+                        .requestMatchers("/api/obsession/**").authenticated()
 
                         // review endpoint
                         .requestMatchers("/api/review/**").authenticated()
