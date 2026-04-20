@@ -1,11 +1,15 @@
 package com.br.chagas.midnights_fm.service;
 
 import com.br.chagas.midnights_fm.database.entities.InviteEntity;
+import com.br.chagas.midnights_fm.database.entities.PlaylistEntity;
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
+import com.br.chagas.midnights_fm.database.entities.enums.InviteStatus;
 import com.br.chagas.midnights_fm.database.repository.InviteRepository;
 import com.br.chagas.midnights_fm.database.repository.PlaylistRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
+import com.br.chagas.midnights_fm.dto.request.InviteRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.InviteResponseDTO;
+import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,5 +39,37 @@ public class InviteService {
                     .status(i.getStatus())
                     .build()
             );
+    }
+
+    public InviteResponseDTO createInvite(String username, InviteRequestDTO inviteRequestDTO){
+        UserEntity sender = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        PlaylistEntity playlist = playlistRepository.findById(inviteRequestDTO.getPlaylistId())
+                .orElseThrow(() -> new NotFoundException("Playlist not found"));
+
+        if(!playlist.getUser().getUsername().equals(username)){
+            throw new BadRequestException("You not are owner these playlist");
+        }
+
+        UserEntity resolver = userRepository.findById(inviteRequestDTO.getResolverId())
+                .orElseThrow(() -> new NotFoundException("Resolver not found"));
+
+        InviteEntity invite = InviteEntity.builder()
+                .playlist(playlist)
+                .resolver(resolver)
+                .sender(sender)
+                .status(InviteStatus.PENDENT)
+                .build();
+
+        inviteRepository.save(invite);
+
+        return InviteResponseDTO.builder()
+                .id(invite.getId())
+                .playlistId(playlist.getId())
+                .resolverId(resolver.getId())
+                .senderId(sender.getId())
+                .status(invite.getStatus())
+                .build();
     }
 }
