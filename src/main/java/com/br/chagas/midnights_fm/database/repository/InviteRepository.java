@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InviteRepository extends JpaRepository<InviteEntity, Integer> {
-    Page<InviteEntity> findAllPlaylistByUserUsername(String username, Pageable pageable);
+    Page<InviteEntity> findInviteBySenderUsername(String username, Pageable pageable);
 }

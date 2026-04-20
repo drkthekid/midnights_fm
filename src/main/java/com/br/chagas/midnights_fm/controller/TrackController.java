@@ -31,8 +31,9 @@ public class TrackController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TrackResponseDTO createTrack(@RequestBody TrackRequestDTO trackRequestDTO) {
-        return trackService.createTrack(trackRequestDTO);
+    public TrackResponseDTO createTrack(@AuthenticationPrincipal UserDetails principal,
+            @RequestBody TrackRequestDTO trackRequestDTO) {
+        return trackService.createTrack(principal.getUsername(),trackRequestDTO);
     }
 
     @PutMapping("/{id}")

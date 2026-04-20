@@ -25,7 +25,7 @@ public class InviteService {
         UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
-            Page<InviteEntity> invites = inviteRepository.findAllPlaylistByUserUsername(username, PageRequest.of(page, size));
+            Page<InviteEntity> invites = inviteRepository.findInviteBySenderUsername(username, PageRequest.of(page, size));
 
             return invites.map(i -> InviteResponseDTO.builder()
                     .id(i.getId())

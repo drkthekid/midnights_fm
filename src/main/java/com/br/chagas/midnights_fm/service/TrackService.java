@@ -56,12 +56,13 @@ public class TrackService {
                 .build();
     }
 
-    public TrackResponseDTO createTrack(TrackRequestDTO trackRequestDTO) {
+    public TrackResponseDTO createTrack(String username, TrackRequestDTO trackRequestDTO) {
         // list de feats
         List<UserEntity> featsId = new ArrayList<>();
 
         // validation if artist exists and return exception
-        UserEntity artist = userRepository.findById(trackRequestDTO.getArtistId())
+
+        UserEntity artist = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Artist not found"));
 
         // find feats
@@ -96,7 +97,7 @@ public class TrackService {
         return TrackResponseDTO.builder()
                 .id(track.getId())
                 .name(track.getName())
-                .artistId(track.getArtist().getId())
+                .artistId(artist.getId())
                 .albumId(track.getAlbum() != null ? track.getAlbum().getId() : null)
                 .featsId(track.getFeats().stream()
                         .map(UserEntity::getId)

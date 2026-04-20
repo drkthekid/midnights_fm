@@ -62,7 +62,7 @@ public class SecurityFilterConfiguration {
 
                         // playlist endpoint
                         .requestMatchers("/api/playlist/**").authenticated()
-                        
+
                         // invite endpoint
                         .requestMatchers("/api/invite/**").authenticated()
 

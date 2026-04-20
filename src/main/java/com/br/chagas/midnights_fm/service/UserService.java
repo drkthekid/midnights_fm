@@ -28,6 +28,7 @@ public class UserService {
 
         // return user dto out password
         return UserResponseDTO.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())

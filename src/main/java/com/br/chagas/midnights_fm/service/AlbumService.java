@@ -67,15 +67,15 @@ public class AlbumService {
             TrackEntity track = trackRepository.findById(trackId)
                     .orElseThrow(() -> new NotFoundException("Track not found"));
 
-            if (!track.getArtist().getId().equals(username)) {
+            if (!track.getArtist().getUsername().equals(username)) {
                 throw new CustomAcessDeniedException("You not are owner this track!");
             }
 
             tracksIds.add(track);
         }
 
-        UserEntity artist = userRepository.findById(albumRequestDTO.getArtistId())
-                .orElseThrow(() -> new NotFoundException("Artist not found"));
+        UserEntity artist = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         AlbumEntity album = AlbumEntity.builder()
                 .name(albumRequestDTO.getName())
@@ -94,7 +94,7 @@ public class AlbumService {
                         .stream()
                         .map(track -> track.getId())
                         .toList())
-                .artist(album.getArtist().getId())
+                .artist(artist.getId())
                 .build();
     }
 
