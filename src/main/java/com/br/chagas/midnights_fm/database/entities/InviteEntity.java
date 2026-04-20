@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PlaylistInviteEntity {
+public class InviteEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

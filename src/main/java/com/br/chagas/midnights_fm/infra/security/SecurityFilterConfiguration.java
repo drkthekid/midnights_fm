@@ -62,6 +62,9 @@ public class SecurityFilterConfiguration {
 
                         // playlist endpoint
                         .requestMatchers("/api/playlist/**").authenticated()
+                        
+                        // invite endpoint
+                        .requestMatchers("/api/invite/**").authenticated()
 
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling.accessDeniedHandler(customSecurityAccessDeniedHandler))

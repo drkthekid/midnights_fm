@@ -1,9 +1,15 @@
-package com.br.chagas.midnights_fm.dto.response;
+package com.br.chagas.midnights_fm.dto.request;
 
 import com.br.chagas.midnights_fm.database.entities.enums.InviteStatus;
+import lombok.*;
 
-public class PlaylistInviteResponseDTO {
-    private Integer id;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class InviteRequestDTO {
     private Integer playlistId;
     private String senderId;
     private String resolverId;
