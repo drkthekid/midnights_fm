@@ -1,5 +1,6 @@
 package com.br.chagas.midnights_fm.service;
 
+import com.br.chagas.midnights_fm.database.entities.RefreshTokenEntity;
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
 import com.br.chagas.midnights_fm.database.entities.enums.UserRole;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
@@ -25,13 +26,14 @@ public class AuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+    private final RefreshTokenService refreshTokenService;
 
-
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, @Lazy AuthenticationManager authenticationManager, TokenService tokenService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -41,18 +43,43 @@ public class AuthService implements UserDetailsService {
     }
 
     public AuthResponseDTO loginUser(AuthLoginDTO authLoginDTO) {
-        // variable fetch register credentials
+        // create token authentication (username + password)
         var authToken = new UsernamePasswordAuthenticationToken(authLoginDTO.getUsername(),
                 authLoginDTO.getPassword());
 
-        // spring validation
+        // spring authentication
         var authentication = authenticationManager.authenticate(authToken);
 
         // fetch user logged, and he transforms in the UserEntity for can be used data him in the system
         var user = (UserEntity) authentication.getPrincipal();
 
-        var token = tokenService.generateToken(user);
-        return new AuthResponseDTO(token);
+        // generate access token
+        var accessToken = tokenService.generateToken(user);
+
+        // create refresh token in database
+        RefreshTokenEntity refreshToken = refreshTokenService.create(user);
+
+        // return the two tokens
+        return new AuthResponseDTO(
+                accessToken,
+                refreshToken.getId()
+        );
+    }
+
+    public AuthResponseDTO refresh(String refreshTokenId) {
+
+        // 1. validate refresh token
+        RefreshTokenEntity token = refreshTokenService.validate(refreshTokenId);
+
+        // 2. generate new access token
+        String newAccessToken = tokenService.generateToken(token.getUser());
+
+        // 3. return new access token
+        return new AuthResponseDTO(
+                newAccessToken,
+                token.getId()
+        );
+
     }
 
     public String registerUser(AuthRegisterDTO request) throws BadRequestException {

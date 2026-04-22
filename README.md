@@ -3,7 +3,7 @@
 - Experimental REST API for music lovers, with roles "Artist" and "User", allowed reviews about albums and singles
   inspiration at last.fm.
 
-- Developed usigg layered architeture (Controller - Service - DTO -> Repository)
+- Developed using layered architecture (Controller - Service - DTO - Repository)
 
 ## Tech Stack
 

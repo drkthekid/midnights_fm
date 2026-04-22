@@ -7,14 +7,13 @@ import com.br.chagas.midnights_fm.database.repository.AlbumRepository;
 import com.br.chagas.midnights_fm.database.repository.TrackRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.AlbumRequestDTO;
+import com.br.chagas.midnights_fm.dto.response.AlbumListResponseDTO;
 import com.br.chagas.midnights_fm.dto.response.AlbumResponseDTO;
 import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
-import com.br.chagas.midnights_fm.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -107,5 +106,9 @@ public class AlbumService {
         }
 
         albumRepository.delete(album);
+    }
+
+    public Page<AlbumListResponseDTO> getAlbums(Integer page, Integer size ) {
+        return albumRepository.findAllWithAverage(PageRequest.of(page, size));
     }
 }

@@ -1,6 +1,7 @@
 package com.br.chagas.midnights_fm.controller;
 
 import com.br.chagas.midnights_fm.dto.request.AlbumRequestDTO;
+import com.br.chagas.midnights_fm.dto.response.AlbumListResponseDTO;
 import com.br.chagas.midnights_fm.dto.response.AlbumResponseDTO;
 import com.br.chagas.midnights_fm.service.AlbumService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,8 @@ public class AlbumController {
     private final AlbumService albumService;
 
     @GetMapping("/page/{page}/size/{size}")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<AlbumResponseDTO> findAllAlbums(@PathVariable Integer page, @PathVariable Integer size) {
-        return albumService.findAllAlbums(page, size);
+    public Page<AlbumListResponseDTO> findAllAlbums(@PathVariable Integer page, @PathVariable Integer size) {
+        return albumService.getAlbums(page, size);
     }
 
     @GetMapping("/{id}")

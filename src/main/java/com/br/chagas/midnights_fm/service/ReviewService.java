@@ -8,6 +8,7 @@ import com.br.chagas.midnights_fm.database.repository.ReviewRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.ReviewRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.ReviewResponseDTO;
+import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import com.br.chagas.midnights_fm.exception.UnauthorizedException;
@@ -65,6 +66,10 @@ public class ReviewService {
                 .user(user)
                 .build();
 
+        if(reviewRequestDTO.getAssessment() > 5 || reviewRequestDTO.getAssessment() < 0){
+            throw new BadRequestException("Invalid grade. Grade should be between 1 and 5");
+        }
+
         // store to the database
         reviewRepository.save(review);
 
@@ -83,7 +88,7 @@ public class ReviewService {
                 .orElseThrow(() -> new NotFoundException("Review not found"));
 
         if (!review.getUser().getId().equals(username)) {
-            throw new CustomAcessDeniedException("You not are owner this review");
+            throw new CustomAcessDeniedException("You not are owner that review");
         }
 
         reviewRepository.delete(review);

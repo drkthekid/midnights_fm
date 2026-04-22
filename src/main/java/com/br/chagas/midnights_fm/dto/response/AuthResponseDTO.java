@@ -1,10 +1,6 @@
 package com.br.chagas.midnights_fm.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@Getter
-@AllArgsConstructor
-public class AuthResponseDTO {
-    private String token;
-}
+public record AuthResponseDTO(
+        String accessToken,
+        String refreshToken
+) {}

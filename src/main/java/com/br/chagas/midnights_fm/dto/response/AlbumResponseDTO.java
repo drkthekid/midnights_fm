@@ -16,4 +16,6 @@ public class AlbumResponseDTO {
     private String genre;
     private List<Integer> tracksId;
     private String artist;
+    private Double averageAssessment;
+
 }

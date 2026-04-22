@@ -4,6 +4,7 @@ package com.br.chagas.midnights_fm.database.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,5 +30,8 @@ public class AlbumEntity {
     @ManyToOne
     @JoinColumn(name = "artist_id")
     private UserEntity artist;
+
+    @OneToMany(mappedBy = "album")
+    private List<ReviewEntity> reviews = new ArrayList<>();
 
 }

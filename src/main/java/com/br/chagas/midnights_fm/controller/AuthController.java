@@ -1,6 +1,7 @@
 package com.br.chagas.midnights_fm.controller;
 
 import com.br.chagas.midnights_fm.dto.request.AuthLoginDTO;
+import com.br.chagas.midnights_fm.dto.request.AuthRefreshDTO;
 import com.br.chagas.midnights_fm.dto.request.AuthRegisterDTO;
 import com.br.chagas.midnights_fm.dto.response.AuthResponseDTO;
 import com.br.chagas.midnights_fm.service.AuthService;
@@ -25,6 +26,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public AuthResponseDTO login(@RequestBody AuthLoginDTO authLogin) {
         return authService.loginUser(authLogin);
+    }
+
+    @PostMapping("/refresh")
+    public AuthResponseDTO refresh(@RequestBody AuthRefreshDTO request) {
+        return authService.refresh(request.refreshToken());
     }
 
 }
