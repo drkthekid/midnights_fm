@@ -28,7 +28,7 @@ public class PlaylistController {
     @ResponseStatus(HttpStatus.OK)
     public Page<PlaylistResponseDTO> findAllPlaylistByUserUsername(@PathVariable String username,
                                                                    @PathVariable Integer page, @PathVariable Integer size) {
-        return playlistService.findAllMyPlaylists(username, page, size);
+        return playlistService.findPlaylistByUserUsername(username, page, size);
     }
 
     @PostMapping

@@ -19,15 +19,31 @@ public class InviteController {
 
     @GetMapping("/me/page/{page}/size/{size}")
     public Page<InviteResponseDTO> findAllInvites(@AuthenticationPrincipal UserDetails principal,
-                                                  @PathVariable Integer page, Integer size){
-            return inviteService.findAllRequest(principal.getUsername(), page, size);
+                                                  @PathVariable Integer page,@PathVariable Integer size) {
+        return inviteService.findAllRequest(principal.getUsername(), page, size);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public InviteResponseDTO createInvite(@AuthenticationPrincipal UserDetails principal,
-                                          @RequestBody InviteRequestDTO inviteRequestDTO){
+                                          @RequestBody InviteRequestDTO inviteRequestDTO) {
         return inviteService.createInvite(principal.getUsername(), inviteRequestDTO);
+    }
+
+    @PatchMapping("/{id}/accept")
+    @ResponseStatus(HttpStatus.OK)
+    public String acceptInvite(@AuthenticationPrincipal UserDetails principal,
+                               @PathVariable Integer id,
+                               InviteRequestDTO inviteRequestDTO) {
+        return inviteService.acceptInvite(principal.getUsername(), id, inviteRequestDTO);
+    }
+
+    @PatchMapping("/{id}/rejected")
+    @ResponseStatus(HttpStatus.OK)
+    public String rejectedInvite(@AuthenticationPrincipal UserDetails principal,
+                               @PathVariable Integer id,
+                               InviteRequestDTO inviteRequestDTO) {
+        return inviteService.rejectedInvite(principal.getUsername(), id, inviteRequestDTO);
     }
 
 }

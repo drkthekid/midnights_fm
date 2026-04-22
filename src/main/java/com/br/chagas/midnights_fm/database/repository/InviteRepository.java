@@ -7,4 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InviteRepository extends JpaRepository<InviteEntity, Integer> {
     Page<InviteEntity> findInviteBySenderUsername(String username, Pageable pageable);
+    Page<InviteEntity> findBySenderUsernameOrResolverUsername(
+            String senderUsername,
+            String resolverUsername,
+            Pageable pageable
+    );
 }

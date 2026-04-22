@@ -82,14 +82,6 @@ public class PlaylistService {
                 .build();
     }
 
-//    public String sendSolicitationCollaborator(String username, PlaylistSendSolicitationCollaboratorRequestDTO dto) {
-//        UserEntity user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new NotFoundException("User not found"));
-//
-//
-//
-//    }
-
     public void deleteMyPlaylist(String username, Integer id) {
         PlaylistEntity playlist = playlistRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Playlist not found"));
@@ -100,6 +92,5 @@ public class PlaylistService {
 
         playlistRepository.delete(playlist);
     }
-
 
 }

@@ -3,6 +3,7 @@ package com.br.chagas.midnights_fm.database.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,9 +32,9 @@ public class PlaylistEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "collaborators",
-            joinColumns = @JoinColumn(name = "collaborators_id"),
+            name = "playlist_collaborators",
+            joinColumns = @JoinColumn(name = "playlist_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<UserEntity> collaborators;
+    private List<UserEntity> collaborators = new ArrayList<>();
 }
