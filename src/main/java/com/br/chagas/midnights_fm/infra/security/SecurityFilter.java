@@ -17,9 +17,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
-
-
-
     private final TokenService tokenService;
     private final UserRepository userRepository;
 
@@ -31,14 +28,16 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (token != null) {
             var username = tokenService.validateToken(token);
 
-            userRepository.findByUsername(username).ifPresent(u -> {
-                var authentication = new UsernamePasswordAuthenticationToken(
-                        u,
-                        null,
-                        u.getAuthorities()
-                );
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            });
+            if (username != null && !username.isBlank()) {
+                userRepository.findByUsername(username).ifPresent(u -> {
+                    var authentication = new UsernamePasswordAuthenticationToken(
+                            u,
+                            null,
+                            u.getAuthorities()
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                });
+            }
         }
         filterChain.doFilter(request, response);
     }

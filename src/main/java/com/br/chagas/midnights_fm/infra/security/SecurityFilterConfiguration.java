@@ -38,6 +38,7 @@ public class SecurityFilterConfiguration {
                         // public endpoint
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
 
                         // user endpoint
                         .requestMatchers("/api/user/**").authenticated()

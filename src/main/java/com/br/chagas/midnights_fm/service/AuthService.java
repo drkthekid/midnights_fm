@@ -10,6 +10,8 @@ import com.br.chagas.midnights_fm.dto.response.AuthResponseDTO;
 import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import com.br.chagas.midnights_fm.infra.security.TokenService;
+import com.br.chagas.midnights_fm.infra.security.ratelimit.RateLimitService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,13 +29,17 @@ public class AuthService implements UserDetailsService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final RefreshTokenService refreshTokenService;
+    private final HttpServletRequest request;
+    private final RateLimitService rateLimitService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, @Lazy AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService, HttpServletRequest request, RateLimitService rateLimitService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
         this.refreshTokenService = refreshTokenService;
+        this.request = request;
+        this.rateLimitService = rateLimitService;
     }
 
     @Override
@@ -43,27 +49,44 @@ public class AuthService implements UserDetailsService {
     }
 
     public AuthResponseDTO loginUser(AuthLoginDTO authLoginDTO) {
+
+        String ip = request.getRemoteAddr();
+
+        if (rateLimitService.isBlocked(ip)) {
+            throw new RuntimeException("Too many attempts. Try again later.");
+        }
+
         // create token authentication (username + password)
         var authToken = new UsernamePasswordAuthenticationToken(authLoginDTO.getUsername(),
                 authLoginDTO.getPassword());
 
-        // spring authentication
-        var authentication = authenticationManager.authenticate(authToken);
+        try {
 
-        // fetch user logged, and he transforms in the UserEntity for can be used data him in the system
-        var user = (UserEntity) authentication.getPrincipal();
+            // spring authentication
+            var authentication = authenticationManager.authenticate(authToken);
 
-        // generate access token
-        var accessToken = tokenService.generateToken(user);
+            // fetch user logged, and he transforms in the UserEntity for can be used data him in the system
+            var user = (UserEntity) authentication.getPrincipal();
 
-        // create refresh token in database
-        RefreshTokenEntity refreshToken = refreshTokenService.create(user);
+            // reset attempts
+            rateLimitService.loginSuccess(ip);
 
-        // return the two tokens
-        return new AuthResponseDTO(
-                accessToken,
-                refreshToken.getId()
-        );
+            // generate access token
+            var accessToken = tokenService.generateToken(user);
+
+            // create refresh token in database
+            RefreshTokenEntity refreshToken = refreshTokenService.create(user);
+
+            // return the two tokens
+            return new AuthResponseDTO(
+                    accessToken,
+                    refreshToken.getId()
+            );
+        } catch (Exception e) {
+            rateLimitService.loginFailed(ip);
+
+            throw new RuntimeException("Invalid username or password");
+        }
     }
 
     public AuthResponseDTO refresh(String refreshTokenId) {
