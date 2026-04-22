@@ -1,4 +1,4 @@
-package com.br.chagas.midnights_fm.infra.security.ratelimit;
+package com.br.chagas.midnights_fm.infra.ratelimit;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

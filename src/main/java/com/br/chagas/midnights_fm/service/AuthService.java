@@ -2,7 +2,6 @@ package com.br.chagas.midnights_fm.service;
 
 import com.br.chagas.midnights_fm.database.entities.RefreshTokenEntity;
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
-import com.br.chagas.midnights_fm.database.entities.enums.UserRole;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.AuthLoginDTO;
 import com.br.chagas.midnights_fm.dto.request.AuthRegisterDTO;
@@ -10,7 +9,7 @@ import com.br.chagas.midnights_fm.dto.response.AuthResponseDTO;
 import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import com.br.chagas.midnights_fm.infra.security.TokenService;
-import com.br.chagas.midnights_fm.infra.security.ratelimit.RateLimitService;
+import com.br.chagas.midnights_fm.infra.ratelimit.RateLimitService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;

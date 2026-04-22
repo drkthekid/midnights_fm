@@ -1,9 +1,8 @@
-package com.br.chagas.midnights_fm.infra.security.ratelimit;
+package com.br.chagas.midnights_fm.infra.ratelimit;
 
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
