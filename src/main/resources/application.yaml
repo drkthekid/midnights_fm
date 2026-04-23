@@ -2,7 +2,7 @@ spring:
   application:
     name: midnights-fm
   datasource:
-    url: jdbc:mysql://localhost:3306/midnights_fm?createDatabaseIfNotExist=true
+    url: ${SPRING_DATASOURCE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
   jpa:
