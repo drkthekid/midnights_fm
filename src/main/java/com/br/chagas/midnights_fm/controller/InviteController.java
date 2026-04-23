@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/invite")
+@RequestMapping("/api/invites")
 @RequiredArgsConstructor
 public class InviteController {
 
@@ -38,7 +38,7 @@ public class InviteController {
         return inviteService.acceptInvite(principal.getUsername(), id, inviteRequestDTO);
     }
 
-    @PatchMapping("/{id}/rejected")
+    @PatchMapping("/{id}/reject")
     @ResponseStatus(HttpStatus.OK)
     public String rejectedInvite(@AuthenticationPrincipal UserDetails principal,
                                @PathVariable Integer id,

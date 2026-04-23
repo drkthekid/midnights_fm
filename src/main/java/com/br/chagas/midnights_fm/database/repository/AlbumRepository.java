@@ -1,6 +1,7 @@
 package com.br.chagas.midnights_fm.database.repository;
 
 import com.br.chagas.midnights_fm.database.entities.AlbumEntity;
+import com.br.chagas.midnights_fm.database.entities.UserEntity;
 import com.br.chagas.midnights_fm.dto.response.AlbumListResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

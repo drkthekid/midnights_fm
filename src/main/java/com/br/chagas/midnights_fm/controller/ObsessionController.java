@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/obsession")
+@RequestMapping("/api/obsessions")
 @RequiredArgsConstructor
 public class ObsessionController {
 

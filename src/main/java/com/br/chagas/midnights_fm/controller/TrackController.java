@@ -11,16 +11,30 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/track")
+@RequestMapping("/api/tracks")
 @RequiredArgsConstructor
 public class TrackController {
 
     private final TrackService trackService;
 
-    @GetMapping("/page/{page}/size/{size}")
-    @ResponseStatus(HttpStatus.OK)
-    public Page<TrackResponseDTO> findAll(@PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping()
+    public Page<TrackResponseDTO> findAll(@RequestParam int page,
+                                          @RequestParam int size) {
         return trackService.findAllTracks(page, size);
+    }
+
+    @GetMapping("/me")
+    public Page<TrackResponseDTO> findAllMyTracks(@AuthenticationPrincipal UserDetails principal,
+                                                  @RequestParam int page,
+                                                  @RequestParam int size) {
+        return trackService.findAllMyTracks(principal.getUsername(), page, size);
+    }
+
+    @GetMapping("/artist/{username}")
+    public Page<TrackResponseDTO> findAllByUsername(@PathVariable String username,
+                                                    @RequestParam int page,
+                                                    @RequestParam int size) {
+        return trackService.findAllByUsername(username, page, size);
     }
 
     @GetMapping("/{id}")
@@ -28,12 +42,11 @@ public class TrackController {
         return trackService.findTrackById(id);
     }
 
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TrackResponseDTO createTrack(@AuthenticationPrincipal UserDetails principal,
-            @RequestBody TrackRequestDTO trackRequestDTO) {
-        return trackService.createTrack(principal.getUsername(),trackRequestDTO);
+                                        @RequestBody TrackRequestDTO trackRequestDTO) {
+        return trackService.createTrack(principal.getUsername(), trackRequestDTO);
     }
 
     @PutMapping("/{id}")

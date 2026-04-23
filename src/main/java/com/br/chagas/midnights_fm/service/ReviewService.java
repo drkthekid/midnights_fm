@@ -66,9 +66,18 @@ public class ReviewService {
                 .user(user)
                 .build();
 
-        if(reviewRequestDTO.getAssessment() > 5 || reviewRequestDTO.getAssessment() < 0){
-            throw new BadRequestException("Invalid grade. Grade should be between 1 and 5");
+        boolean exists = reviewRepository.existsByUserUsernameAndAlbumId(username, id);
+
+        if (exists) {
+            throw new BadRequestException("Você já avaliou este álbum");
         }
+
+        Integer assessment = reviewRequestDTO.getAssessment();
+
+        if (assessment == null || assessment > 5 || assessment < 0) {
+            throw new BadRequestException("Invalid grade. Grade should be between 0 and 5");
+        }
+
 
         // store to the database
         reviewRepository.save(review);

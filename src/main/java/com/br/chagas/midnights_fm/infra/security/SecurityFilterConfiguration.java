@@ -41,31 +41,31 @@ public class SecurityFilterConfiguration {
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
 
                         // user endpoint
-                        .requestMatchers("/api/user/**").authenticated()
+                        .requestMatchers("/api/users/**").authenticated()
 
                         // track endpoint
-                        .requestMatchers(HttpMethod.POST, "/api/track/**").hasRole("ARTIST")
-                        .requestMatchers(HttpMethod.PUT, "/api/track/**").hasRole("ARTIST")
-                        .requestMatchers(HttpMethod.DELETE, "/api/track/**").hasRole("ARTIST")
-                        .requestMatchers(HttpMethod.GET, "/api/track/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/tracks/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.PUT, "/api/tracks/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.DELETE, "/api/tracks/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.GET, "/api/tracks/**").authenticated()
 
                         // album endpoint
-                        .requestMatchers(HttpMethod.POST, "/api/album/**").hasRole("ARTIST")
-                        .requestMatchers(HttpMethod.PUT, "/api/album/**").hasRole("ARTIST")
-                        .requestMatchers(HttpMethod.DELETE, "/api/album/**").hasRole("ARTIST")
-                        .requestMatchers(HttpMethod.GET, "/api/album/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/albums/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.PUT, "/api/albums/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.DELETE, "/api/albums/**").hasRole("ARTIST")
+                        .requestMatchers(HttpMethod.GET, "/api/albums/**").authenticated()
 
                         // obsession endpoint
-                        .requestMatchers("/api/obsession/**").authenticated()
+                        .requestMatchers("/api/obsessions/**").authenticated()
 
                         // review endpoint
-                        .requestMatchers("/api/review/**").authenticated()
+                        .requestMatchers("/api/reviews/**").authenticated()
 
                         // playlist endpoint
-                        .requestMatchers("/api/playlist/**").authenticated()
+                        .requestMatchers("/api/playlists/**").authenticated()
 
                         // invite endpoint
-                        .requestMatchers("/api/invite/**").authenticated()
+                        .requestMatchers("/api/invites/**").authenticated()
 
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling.accessDeniedHandler(customSecurityAccessDeniedHandler))

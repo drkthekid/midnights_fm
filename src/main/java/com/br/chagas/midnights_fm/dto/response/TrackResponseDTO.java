@@ -6,15 +6,13 @@ import java.util.List;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class TrackResponseDTO {
 
     private Integer id;
     private String name;
-    private String artistId;
-    private List<String> featsId;
+    private UserSummaryDTO artist;
+    private List<UserSummaryDTO> feats;
     private Integer albumId;
 
 }

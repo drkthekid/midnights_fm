@@ -17,7 +17,8 @@
 
 ## Features
 
-- JWT-based authentication
+- JWT-based authentication + Refresh Token
+- Rate Limit 
 - Role-based authorization (Artist and User)
 - CRUD Operations for Artist, User, Track, Album, Single and Review
 - Public review system

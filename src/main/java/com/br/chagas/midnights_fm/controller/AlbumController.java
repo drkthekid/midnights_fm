@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/album")
+@RequestMapping("/api/albums")
 @RequiredArgsConstructor
 public class AlbumController {
 
@@ -23,7 +23,7 @@ public class AlbumController {
         return albumService.getAlbums(page, size);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{albumId}")
     @ResponseStatus(HttpStatus.OK)
     public AlbumResponseDTO findAlbumById(@PathVariable Integer id) {
         return albumService.findAlbumById(id);
@@ -36,7 +36,7 @@ public class AlbumController {
         return albumService.createAlbum(albumRequestDTO, principal.getUsername());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{albumID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAlbum(@AuthenticationPrincipal UserDetails principal,
                             @PathVariable Integer id) {

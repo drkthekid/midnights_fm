@@ -3,11 +3,14 @@ package com.br.chagas.midnights_fm.service;
 import com.br.chagas.midnights_fm.database.entities.AlbumEntity;
 import com.br.chagas.midnights_fm.database.entities.TrackEntity;
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
+import com.br.chagas.midnights_fm.database.entities.enums.UserRole;
 import com.br.chagas.midnights_fm.database.repository.AlbumRepository;
 import com.br.chagas.midnights_fm.database.repository.TrackRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.TrackRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.TrackResponseDTO;
+import com.br.chagas.midnights_fm.dto.response.UserSummaryDTO;
+import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +36,95 @@ public class TrackService {
         return tracks.map(t -> TrackResponseDTO.builder()
                 .id(t.getId())
                 .name(t.getName())
-                .artistId(t.getArtist().getId())
-                .featsId(t.getFeats() != null
-                        ? t.getFeats().stream().map(UserEntity::getId).toList()
+
+                // artist
+                .artist(new UserSummaryDTO(
+                        t.getArtist().getId(),
+                        t.getArtist().getUsername()
+                ))
+
+                // feats
+                .feats(t.getFeats() != null
+                        ? t.getFeats().stream()
+                          .map(f -> new UserSummaryDTO(
+                                  f.getId(),
+                                  f.getUsername()
+                          ))
+                          .toList()
                         : List.of())
+
+                .albumId(t.getAlbum() != null ? t.getAlbum().getId() : null)
+                .build());
+    }
+
+
+    public Page<TrackResponseDTO> findAllMyTracks(String username, Integer page, Integer size) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (user.getRole() != UserRole.ARTIST) {
+            throw new BadRequestException("You not are a artist");
+        }
+
+        Page<TrackEntity> tracks = trackRepository
+                .findAllTracksByArtistUsername(username, PageRequest.of(page, size));
+
+
+        return tracks.map(t -> TrackResponseDTO.builder()
+                .id(t.getId())
+                .name(t.getName())
+
+                // artist
+                .artist(new UserSummaryDTO(
+                        t.getArtist().getId(),
+                        t.getArtist().getUsername()
+                ))
+
+                // feats
+                .feats(t.getFeats() != null
+                        ? t.getFeats().stream()
+                          .map(f -> new UserSummaryDTO(
+                                  f.getId(),
+                                  f.getUsername()
+                          ))
+                          .toList()
+                        : List.of())
+
+                .albumId(t.getAlbum() != null ? t.getAlbum().getId() : null)
+                .build());
+    }
+
+    public Page<TrackResponseDTO> findAllByUsername(String username, Integer page, Integer size) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        if (user.getRole() != UserRole.ARTIST) {
+            throw new BadRequestException("User not artist");
+        }
+
+        Page<TrackEntity> tracks = trackRepository
+                .findAllTracksByArtist(user, PageRequest.of(page, size));
+
+        return tracks.map(t -> TrackResponseDTO.builder()
+                .id(t.getId())
+                .name(t.getName())
+
+                // artist
+                .artist(new UserSummaryDTO(
+                        user.getId(),
+                        user.getUsername()
+                ))
+
+                // feats
+                .feats(t.getFeats() != null
+                        ? t.getFeats().stream()
+                          .map(f -> new UserSummaryDTO(
+                                  f.getId(),
+                                  f.getUsername()
+                          ))
+                          .toList()
+                        : List.of())
+
                 .albumId(t.getAlbum() != null ? t.getAlbum().getId() : null)
                 .build());
     }
@@ -48,10 +136,21 @@ public class TrackService {
         return TrackResponseDTO.builder()
                 .id(track.getId())
                 .name(track.getName())
-                .artistId(track.getArtist().getId())
-                .featsId(track.getFeats() != null
-                        ? track.getFeats().stream().map(UserEntity::getId).toList()
+
+                .artist(new UserSummaryDTO(
+                        track.getArtist().getId(),
+                        track.getArtist().getUsername()
+                ))
+
+                .feats(track.getFeats() != null
+                        ? track.getFeats().stream()
+                          .map(f -> new UserSummaryDTO(
+                                  f.getId(),
+                                  f.getUsername()
+                          ))
+                          .toList()
                         : List.of())
+
                 .albumId(track.getAlbum() != null ? track.getAlbum().getId() : null)
                 .build();
     }
@@ -97,11 +196,21 @@ public class TrackService {
         return TrackResponseDTO.builder()
                 .id(track.getId())
                 .name(track.getName())
-                .artistId(artist.getId())
+                .artist(new UserSummaryDTO(
+                        track.getArtist().getId(),
+                        track.getArtist().getUsername()
+                ))
+
+                .feats(track.getFeats() != null
+                        ? track.getFeats().stream()
+                          .map(f -> new UserSummaryDTO(
+                                  f.getId(),
+                                  f.getUsername()
+                          ))
+                          .toList()
+                        : List.of())
+
                 .albumId(track.getAlbum() != null ? track.getAlbum().getId() : null)
-                .featsId(track.getFeats().stream()
-                        .map(UserEntity::getId)
-                        .toList())
                 .build();
     }
 
@@ -162,10 +271,19 @@ public class TrackService {
         return TrackResponseDTO.builder()
                 .id(track.getId())
                 .name(track.getName())
-                .artistId(track.getArtist().getId())
-                .featsId(track.getFeats() != null
-                        ? track.getFeats().stream().map(UserEntity::getId).toList()
+                .artist(new UserSummaryDTO(
+                        track.getArtist().getId(),
+                        track.getArtist().getUsername()
+                ))
+                .feats(track.getFeats() != null
+                        ? track.getFeats().stream()
+                          .map(f -> new UserSummaryDTO(
+                                  f.getId(),
+                                  f.getUsername()
+                          ))
+                          .toList()
                         : List.of())
+
                 .albumId(track.getAlbum() != null ? track.getAlbum().getId() : null)
                 .build();
     }

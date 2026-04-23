@@ -27,19 +27,8 @@ public class AlbumService {
     private final UserRepository userRepository;
     private final TrackRepository trackRepository;
 
-    public Page<AlbumResponseDTO> findAllAlbums(Integer page, Integer size) {
-        Page<AlbumEntity> albums = albumRepository.findAll(PageRequest.of(page, size));
-
-        return albums.map(a -> AlbumResponseDTO.builder()
-                .id(a.getId())
-                .name(a.getName())
-                .genre(a.getGenre())
-                .tracksId(a.getTracks()
-                        .stream()
-                        .map(t -> t.getId())
-                        .toList())
-                .build()
-        );
+    public Page<AlbumListResponseDTO> getAlbums(Integer page, Integer size) {
+        return albumRepository.findAllWithAverage(PageRequest.of(page, size));
     }
 
     public AlbumResponseDTO findAlbumById(Integer id) {
@@ -108,7 +97,5 @@ public class AlbumService {
         albumRepository.delete(album);
     }
 
-    public Page<AlbumListResponseDTO> getAlbums(Integer page, Integer size ) {
-        return albumRepository.findAllWithAverage(PageRequest.of(page, size));
-    }
+
 }
