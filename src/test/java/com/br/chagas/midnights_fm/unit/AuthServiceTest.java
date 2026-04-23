@@ -7,6 +7,8 @@ import com.br.chagas.midnights_fm.dto.request.AuthLoginDTO;
 import com.br.chagas.midnights_fm.dto.response.AuthResponseDTO;
 import com.br.chagas.midnights_fm.infra.ratelimit.RateLimitService;
 import com.br.chagas.midnights_fm.infra.security.TokenService;
+import com.br.chagas.midnights_fm.service.AuthService;
+import com.br.chagas.midnights_fm.service.RefreshTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

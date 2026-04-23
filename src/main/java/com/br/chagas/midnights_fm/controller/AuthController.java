@@ -1,10 +1,10 @@
-package com.br.chagas.midnights_fm.integration;
+package com.br.chagas.midnights_fm.controller;
 
 import com.br.chagas.midnights_fm.dto.request.AuthLoginDTO;
 import com.br.chagas.midnights_fm.dto.request.AuthRefreshDTO;
 import com.br.chagas.midnights_fm.dto.request.AuthRegisterDTO;
 import com.br.chagas.midnights_fm.dto.response.AuthResponseDTO;
-import com.br.chagas.midnights_fm.unit.AuthService;
+import com.br.chagas.midnights_fm.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

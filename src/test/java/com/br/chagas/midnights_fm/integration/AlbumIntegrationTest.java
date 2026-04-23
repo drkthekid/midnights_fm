@@ -9,7 +9,7 @@ import com.br.chagas.midnights_fm.database.repository.TrackRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.AlbumRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.AlbumResponseDTO;
-import com.br.chagas.midnights_fm.unit.AlbumService;
+import com.br.chagas.midnights_fm.service.AlbumService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

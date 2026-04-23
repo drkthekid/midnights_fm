@@ -1,8 +1,8 @@
-package com.br.chagas.midnights_fm.integration;
+package com.br.chagas.midnights_fm.controller;
 
 import com.br.chagas.midnights_fm.dto.request.ObsessionRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.ObsessionResponseDTO;
-import com.br.chagas.midnights_fm.unit.ObsessionService;
+import com.br.chagas.midnights_fm.service.ObsessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

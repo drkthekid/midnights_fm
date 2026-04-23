@@ -1,4 +1,4 @@
-package com.br.chagas.midnights_fm.unit;
+package com.br.chagas.midnights_fm.service;
 
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;

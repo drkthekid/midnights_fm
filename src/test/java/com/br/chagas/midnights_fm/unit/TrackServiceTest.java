@@ -6,6 +6,7 @@ import com.br.chagas.midnights_fm.dto.request.TrackRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.TrackResponseDTO;
 import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
+import com.br.chagas.midnights_fm.service.TrackService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

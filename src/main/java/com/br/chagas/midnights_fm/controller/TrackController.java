@@ -1,8 +1,8 @@
-package com.br.chagas.midnights_fm.integration;
+package com.br.chagas.midnights_fm.controller;
 
 import com.br.chagas.midnights_fm.dto.request.TrackRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.TrackResponseDTO;
-import com.br.chagas.midnights_fm.unit.TrackService;
+import com.br.chagas.midnights_fm.service.TrackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
