@@ -1,8 +1,8 @@
-package com.br.chagas.midnights_fm.controller;
+package com.br.chagas.midnights_fm.integration;
 
 import com.br.chagas.midnights_fm.dto.request.InviteRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.InviteResponseDTO;
-import com.br.chagas.midnights_fm.service.InviteService;
+import com.br.chagas.midnights_fm.unit.InviteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,9 +17,10 @@ public class InviteController {
 
     private final InviteService inviteService;
 
-    @GetMapping("/me/page/{page}/size/{size}")
+    @GetMapping("/me")
     public Page<InviteResponseDTO> findAllInvites(@AuthenticationPrincipal UserDetails principal,
-                                                  @PathVariable Integer page,@PathVariable Integer size) {
+                                                  @RequestParam int page,
+                                                  @RequestParam int size) {
         return inviteService.findAllRequest(principal.getUsername(), page, size);
     }
 
@@ -41,8 +42,8 @@ public class InviteController {
     @PatchMapping("/{id}/reject")
     @ResponseStatus(HttpStatus.OK)
     public String rejectedInvite(@AuthenticationPrincipal UserDetails principal,
-                               @PathVariable Integer id,
-                               InviteRequestDTO inviteRequestDTO) {
+                                 @PathVariable Integer id,
+                                 InviteRequestDTO inviteRequestDTO) {
         return inviteService.rejectedInvite(principal.getUsername(), id, inviteRequestDTO);
     }
 

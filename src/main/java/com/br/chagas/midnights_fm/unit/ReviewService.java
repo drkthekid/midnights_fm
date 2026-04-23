@@ -1,4 +1,4 @@
-package com.br.chagas.midnights_fm.service;
+package com.br.chagas.midnights_fm.unit;
 
 import com.br.chagas.midnights_fm.database.entities.AlbumEntity;
 import com.br.chagas.midnights_fm.database.entities.ReviewEntity;
@@ -11,11 +11,9 @@ import com.br.chagas.midnights_fm.dto.response.ReviewResponseDTO;
 import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
-import com.br.chagas.midnights_fm.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service

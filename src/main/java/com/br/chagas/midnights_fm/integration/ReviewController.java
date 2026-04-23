@@ -1,8 +1,8 @@
-package com.br.chagas.midnights_fm.controller;
+package com.br.chagas.midnights_fm.integration;
 
 import com.br.chagas.midnights_fm.dto.request.ReviewRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.ReviewResponseDTO;
-import com.br.chagas.midnights_fm.service.ReviewService;
+import com.br.chagas.midnights_fm.unit.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,9 +17,10 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/page/{page}/size/{size}")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<ReviewResponseDTO> findAllReviews(@PathVariable Integer page, @PathVariable Integer size) {
+    public Page<ReviewResponseDTO> findAllReviews(@RequestParam int page,
+                                                  @RequestParam int size) {
         return reviewService.findAllReviews(page, size);
     }
 
@@ -28,7 +29,7 @@ public class ReviewController {
         return reviewService.findReviewById(id);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/{albumId}")
     @ResponseStatus(HttpStatus.CREATED)
     public ReviewResponseDTO createReview(@AuthenticationPrincipal UserDetails principal,
                                           @PathVariable Integer id,

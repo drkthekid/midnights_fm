@@ -1,14 +1,17 @@
-package com.br.chagas.midnights_fm.service;
+package com.br.chagas.midnights_fm.unit;
 
 import com.br.chagas.midnights_fm.database.entities.AlbumEntity;
 import com.br.chagas.midnights_fm.database.entities.TrackEntity;
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
+import com.br.chagas.midnights_fm.database.entities.enums.UserRole;
 import com.br.chagas.midnights_fm.database.repository.AlbumRepository;
 import com.br.chagas.midnights_fm.database.repository.TrackRepository;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
 import com.br.chagas.midnights_fm.dto.request.AlbumRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.AlbumListResponseDTO;
 import com.br.chagas.midnights_fm.dto.response.AlbumResponseDTO;
+import com.br.chagas.midnights_fm.dto.response.UserSummaryDTO;
+import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.CustomAcessDeniedException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +34,53 @@ public class AlbumService {
         return albumRepository.findAllWithAverage(PageRequest.of(page, size));
     }
 
+    public Page<AlbumResponseDTO> findAllMyAlbums(String username, Integer page, Integer size) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        Page<AlbumEntity> albums = albumRepository.findAllAlbumsByArtistUsername(username, PageRequest.of(page, size));
+
+        return albums.map(album -> AlbumResponseDTO.builder()
+                .id(album.getId())
+                .name(album.getName())
+                .genre(album.getGenre())
+                .artist(new UserSummaryDTO(
+                        album.getArtist().getId(),
+                        album.getArtist().getUsername()
+                ))
+                .tracksId(album.getTracks()
+                        .stream()
+                        .map(t -> t.getId())
+                        .toList())
+                .build());
+
+    }
+
+    public Page<AlbumResponseDTO> findAllAlbumsByArtist(String username, Integer page, Integer size) {
+        UserEntity artist = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Artist not found"));
+
+        if (artist.getRole() != UserRole.ARTIST) {
+            throw new BadRequestException("This user not are an artist");
+        }
+
+        Page<AlbumEntity> albums = albumRepository.findAllAlbumsByArtist(artist, PageRequest.of(page, size));
+
+        return albums.map(album -> AlbumResponseDTO.builder()
+                .id(album.getId())
+                .name(album.getName())
+                .genre(album.getGenre())
+                .artist(new UserSummaryDTO(
+                        artist.getId(),
+                        artist.getUsername()
+                ))
+                .tracksId(album.getTracks()
+                        .stream()
+                        .map(t -> t.getId())
+                        .toList())
+                .build());
+    }
+
     public AlbumResponseDTO findAlbumById(Integer id) {
         AlbumEntity album = albumRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Album not found"));
@@ -43,7 +93,10 @@ public class AlbumService {
                         .stream()
                         .map(t -> t.getId())
                         .toList())
-                .artist(album.getArtist().getId())
+                .artist(new UserSummaryDTO(
+                        album.getArtist().getId(),
+                        album.getArtist().getUsername()
+                ))
                 .build();
     }
 
@@ -82,7 +135,10 @@ public class AlbumService {
                         .stream()
                         .map(track -> track.getId())
                         .toList())
-                .artist(artist.getId())
+                .artist(new UserSummaryDTO(
+                        album.getArtist().getId(),
+                        album.getArtist().getUsername()
+                ))
                 .build();
     }
 

@@ -1,4 +1,4 @@
-package com.br.chagas.midnights_fm.service;
+package com.br.chagas.midnights_fm.unit;
 
 import com.br.chagas.midnights_fm.database.entities.InviteEntity;
 import com.br.chagas.midnights_fm.database.entities.PlaylistEntity;
@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

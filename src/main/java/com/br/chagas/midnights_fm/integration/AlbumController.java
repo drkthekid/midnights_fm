@@ -1,9 +1,9 @@
-package com.br.chagas.midnights_fm.controller;
+package com.br.chagas.midnights_fm.integration;
 
 import com.br.chagas.midnights_fm.dto.request.AlbumRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.AlbumListResponseDTO;
 import com.br.chagas.midnights_fm.dto.response.AlbumResponseDTO;
-import com.br.chagas.midnights_fm.service.AlbumService;
+import com.br.chagas.midnights_fm.unit.AlbumService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,9 +18,24 @@ public class AlbumController {
 
     private final AlbumService albumService;
 
-    @GetMapping("/page/{page}/size/{size}")
-    public Page<AlbumListResponseDTO> findAllAlbums(@PathVariable Integer page, @PathVariable Integer size) {
+    @GetMapping
+    public Page<AlbumListResponseDTO> findAllAlbums(@RequestParam int page,
+                                                    @RequestParam int size) {
         return albumService.getAlbums(page, size);
+    }
+
+    @GetMapping("/me")
+    public Page<AlbumResponseDTO> findAllMyAlbums(@AuthenticationPrincipal UserDetails principal,
+                                                  @RequestParam int page,
+                                                  @RequestParam int size) {
+        return albumService.findAllMyAlbums(principal.getUsername(), page, size);
+    }
+
+    @GetMapping("/artist/{username}")
+    public Page<AlbumResponseDTO> findAlbumByArtist(@PathVariable String username,
+                                                    @RequestParam int page,
+                                                    @RequestParam int size) {
+        return albumService.findAllAlbumsByArtist(username, page, size);
     }
 
     @GetMapping("/{albumId}")

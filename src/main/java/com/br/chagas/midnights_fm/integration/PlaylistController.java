@@ -1,8 +1,8 @@
-package com.br.chagas.midnights_fm.controller;
+package com.br.chagas.midnights_fm.integration;
 
 import com.br.chagas.midnights_fm.dto.request.PlaylistRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.PlaylistResponseDTO;
-import com.br.chagas.midnights_fm.service.PlaylistService;
+import com.br.chagas.midnights_fm.unit.PlaylistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,17 +17,19 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
 
-    @GetMapping("/me/page/{page}/size/{size}")
+    @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     public Page<PlaylistResponseDTO> findAllMyPlaylist(@AuthenticationPrincipal UserDetails principal,
-                                                       @PathVariable Integer page, @PathVariable Integer size) {
+                                                       @RequestParam int page,
+                                                       @RequestParam int size) {
         return playlistService.findAllMyPlaylists(principal.getUsername(), page, size);
     }
 
-    @GetMapping("/{username}/page/{page}/size/{size}")
+    @GetMapping("/{username}")
     @ResponseStatus(HttpStatus.OK)
     public Page<PlaylistResponseDTO> findAllPlaylistByUserUsername(@PathVariable String username,
-                                                                   @PathVariable Integer page, @PathVariable Integer size) {
+                                                                   @RequestParam int page,
+                                                                   @RequestParam int size) {
         return playlistService.findPlaylistByUserUsername(username, page, size);
     }
 

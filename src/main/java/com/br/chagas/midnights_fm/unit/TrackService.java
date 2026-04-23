@@ -1,4 +1,4 @@
-package com.br.chagas.midnights_fm.service;
+package com.br.chagas.midnights_fm.unit;
 
 import com.br.chagas.midnights_fm.database.entities.AlbumEntity;
 import com.br.chagas.midnights_fm.database.entities.TrackEntity;
@@ -63,7 +63,7 @@ public class TrackService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.getRole() != UserRole.ARTIST) {
-            throw new BadRequestException("You not are a artist");
+            throw new BadRequestException("You not are an artist");
         }
 
         Page<TrackEntity> tracks = trackRepository
@@ -99,7 +99,7 @@ public class TrackService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.getRole() != UserRole.ARTIST) {
-            throw new BadRequestException("User not artist");
+            throw new BadRequestException("This user not are an artist");
         }
 
         Page<TrackEntity> tracks = trackRepository

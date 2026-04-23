@@ -1,8 +1,8 @@
-package com.br.chagas.midnights_fm.controller;
+package com.br.chagas.midnights_fm.integration;
 
 import com.br.chagas.midnights_fm.dto.request.ObsessionRequestDTO;
 import com.br.chagas.midnights_fm.dto.response.ObsessionResponseDTO;
-import com.br.chagas.midnights_fm.service.ObsessionService;
+import com.br.chagas.midnights_fm.unit.ObsessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,16 +17,18 @@ public class ObsessionController {
 
     private final ObsessionService obsessionService;
 
-    @GetMapping("/page/{page}/size/{size}")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<ObsessionResponseDTO> findAllObsessions(@PathVariable Integer page, @PathVariable Integer size) {
+    public Page<ObsessionResponseDTO> findAllObsessions(@RequestParam int page,
+                                                        @RequestParam int size) {
         return obsessionService.findAllObsession(page, size);
     }
 
-    @GetMapping("/me/page/{page}/size/{size}")
+    @GetMapping("/me")
     @ResponseStatus(HttpStatus.OK)
     public Page<ObsessionResponseDTO> findAllMyObsessions(@AuthenticationPrincipal UserDetails principal,
-                                                          @PathVariable Integer page, @PathVariable Integer size) {
+                                                          @RequestParam int page,
+                                                          @RequestParam int size) {
         return obsessionService.findAllMyObsession(page, size, principal.getUsername());
     }
 
@@ -40,7 +42,7 @@ public class ObsessionController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteObsession(@AuthenticationPrincipal UserDetails principal,
-                                @PathVariable Integer id){
+                                @PathVariable Integer id) {
         obsessionService.deleteObsession(id, principal.getUsername());
     }
 

@@ -23,4 +23,8 @@ public interface AlbumRepository extends JpaRepository<AlbumEntity, Integer> {
             GROUP BY a.id, a.name, a.genre, a.artist.username
             """)
     Page<AlbumListResponseDTO> findAllWithAverage(Pageable pageable);
+
+    Page<AlbumEntity> findAllAlbumsByArtistUsername(String username, Pageable pageable);
+
+    Page<AlbumEntity> findAllAlbumsByArtist(UserEntity user, Pageable pageable);
 }

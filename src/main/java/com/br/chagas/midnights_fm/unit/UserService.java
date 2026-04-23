@@ -1,4 +1,4 @@
-package com.br.chagas.midnights_fm.service;
+package com.br.chagas.midnights_fm.unit;
 
 import com.br.chagas.midnights_fm.database.entities.UserEntity;
 import com.br.chagas.midnights_fm.database.repository.UserRepository;
@@ -8,9 +8,7 @@ import com.br.chagas.midnights_fm.dto.response.UserResponseDTO;
 import com.br.chagas.midnights_fm.exception.BadRequestException;
 import com.br.chagas.midnights_fm.exception.ConflictException;
 import com.br.chagas.midnights_fm.exception.NotFoundException;
-import com.br.chagas.midnights_fm.exception.UnauthorizedException;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
