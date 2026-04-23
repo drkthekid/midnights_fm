@@ -13,7 +13,6 @@ This document describes the database structure based on the diagram used in this
 | `email`      | UNIQUE           | Email address              |
 | `password`   | NOT NULL         | User password (encrypted)  |
 | `role`       | Attribute        | Role in the system         |
-| `created_at` | Attribute        | Creation timestamp         |
 
 ---
 
