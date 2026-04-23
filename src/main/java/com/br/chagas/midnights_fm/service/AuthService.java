@@ -19,6 +19,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @Service
 public class AuthService implements UserDetailsService {
@@ -30,6 +33,7 @@ public class AuthService implements UserDetailsService {
     private final RefreshTokenService refreshTokenService;
     private final HttpServletRequest request;
     private final RateLimitService rateLimitService;
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, @Lazy AuthenticationManager authenticationManager, TokenService tokenService, RefreshTokenService refreshTokenService, HttpServletRequest request, RateLimitService rateLimitService) {
         this.userRepository = userRepository;
@@ -60,7 +64,6 @@ public class AuthService implements UserDetailsService {
                 authLoginDTO.getPassword());
 
         try {
-
             // spring authentication
             var authentication = authenticationManager.authenticate(authToken);
 
@@ -76,6 +79,11 @@ public class AuthService implements UserDetailsService {
             // create refresh token in database
             RefreshTokenEntity refreshToken = refreshTokenService.create(user);
 
+            log.info("Login success userId={} username={} ip={}",
+                    user.getId(),
+                    user.getUsername(),
+                    ip);
+
             // return the two tokens
             return new AuthResponseDTO(
                     accessToken,
@@ -83,7 +91,7 @@ public class AuthService implements UserDetailsService {
             );
         } catch (Exception e) {
             rateLimitService.loginFailed(ip);
-
+            log.warn("Login failed username={} ip={}", authLoginDTO.getUsername(), ip);
             throw new RuntimeException("Invalid username or password");
         }
     }
@@ -96,32 +104,41 @@ public class AuthService implements UserDetailsService {
         // 2. generate new access token
         String newAccessToken = tokenService.generateToken(token.getUser());
 
+        log.info("Token refresh userId={} refreshTokenId={}",
+                token.getUser().getId(),
+                refreshTokenId);
+
         // 3. return new access token
         return new AuthResponseDTO(
                 newAccessToken,
                 token.getId()
         );
-
     }
 
-    public String registerUser(AuthRegisterDTO request) throws BadRequestException {
+    public String registerUser(AuthRegisterDTO request) {
+
+        if (userRepository.existsByUsername(request.getUsername())) {
+            log.warn("Register failed username already exists={}", request.getUsername());
+            throw new BadRequestException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            log.warn("Register failed email already exists={}", request.getEmail());
+            throw new BadRequestException("Email already exists");
+        }
+
         UserEntity user = new UserEntity();
-        if (!userRepository.existsByUsername(request.getUsername())) {
-            user.setUsername(request.getUsername());
-        }
-
-        if (!userRepository.existsByEmail(request.getUsername())) {
-            user.setEmail(request.getEmail());
-        }
-
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
         user.setRole(request.getRole());
 
         userRepository.save(user);
 
+        log.info("User registered id={} username={}",
+                user.getId(),
+                user.getUsername());
+
         return "User registered with success!";
     }
-
-
 }
